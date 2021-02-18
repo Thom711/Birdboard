@@ -21,6 +21,18 @@ Lesson 03
     Laravel 8 factory works quite different
         $project = Project::factory()->raw(['title' => '']);
 
+Lesson 04
+    Fresh made unit tests cannot handle tests because they run in the wrong namespace
+    Comment out : use PHPUnit\Framework\TestCase;
+    Instead use : use Tests\TestCase;
+
+    Correct syntax for whipping up some factories in Tinker:
+        App\Models\Project::factory()->count(5)->create();
+
+Lesson 05
+
+
+    
 
 
 

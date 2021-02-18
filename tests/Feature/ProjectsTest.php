@@ -20,24 +20,45 @@ class ProjectsTest extends TestCase
             'description' => $this->faker()->paragraph(),
         ];
 
-        $this->post('/projects', $project)->assertRedirect('/projects');
+        $this->post('/projects', $project)
+            ->assertRedirect('/projects');
 
         $this->assertDatabaseHas('projects', $project);
 
-        $this->get('/projects')->assertSee($project['title']);
+        $this->get('/projects')
+            ->assertSee($project['title']);
+    }
+
+    public function test_a_user_can_view_a_project()
+    {
+        $this->withoutExceptionHandling();
+
+        $project = Project::factory()->create();
+
+        $this->get($project->path())
+            ->assertSee($project->title)
+            ->assertSee($project->description);
     }
 
     public function test_a_project_requires_a_title()
     {
-        $project = Project::factory()->raw(['title' => '']);
+        $project = Project::factory()
+            ->raw([
+                'title' => ''
+            ]);
 
-        $this->post('/projects', $project)->assertSessionHasErrors('title');
+        $this->post('/projects', $project)
+            ->assertSessionHasErrors('title');
     }
 
     public function test_a_project_requires_a_description()
     {
-        $project = Project::factory()->raw(['description' => '']);
+        $project = Project::factory()
+            ->raw([
+                'description' => ''
+            ]);
 
-        $this->post('/projects', $project)->assertSessionHasErrors('description');
+        $this->post('/projects', $project)
+            ->assertSessionHasErrors('description');
     }
 }

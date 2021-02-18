@@ -21,14 +21,10 @@
         </style>
     </head>
     <body class="antialiased">
-        <ul>
-            @forelse($projects as $project)
-                <li>
-                    <a href={{ $project->path() }}>{{ $project->title }}</a>
-                </li>
-            @empty
-                No projets yet.
-            @endforelse
-        </ul>
+
+        {{ $project->title }}
+
+        {{ $project->description }}
+
     </body>
 </html>
