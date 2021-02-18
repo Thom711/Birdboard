@@ -30,6 +30,18 @@ Lesson 04
         App\Models\Project::factory()->count(5)->create();
 
 Lesson 05
+    Owner_Id on laravel 8 migrations:
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+    Setting the owner_id in the Project Factory:
+            public function definition()
+            {
+                return [
+                    'owner_id' => User::factory()->create()->id,
+                    'title' => $this->faker->sentence(),
+                    'description' => $this->faker->paragraph()
+                ];
+            }
 
 
     
