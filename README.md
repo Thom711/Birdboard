@@ -43,7 +43,25 @@ Lesson 05
                 ];
             }
 
+Lesson 06
+    Group middleware syntax on the routes file is also writeable as:
+        Route::middleware(['auth'])->group(function () {
+            Route::get('/projects', [ProjectsController::class, 'index'])->name('projects');
+            Route::get('/projects/{project}', [ProjectsController::class, 'show']);
+            Route::post('/projects', [ProjectsController::class, 'store']);
+        });
 
+Tussendoor:
+    Blog ideetje over hoe laravel functies zoals tap! touch! of is! isNot! je een slechtere developer maken
+
+Lesson 07
+    -- No comments -- 
+
+Lesson 08
+    Mostly skippable, fixed by initializing with Breeze
+
+Lesson 09
+    -- No comments --
     
 
 
