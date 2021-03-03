@@ -17,27 +17,37 @@
         <div class="lg:w-3/4 px-3">
             <div class="mb-8">
                 <h2 class="text-gray-400 font-normal text-lg mb-3">Tasks</h2>
-                <div class="bg-white rounded-lg shadow-lg p-5 mb-3">
-                    Lorem Ipsum
-                </div>
+                
+                @foreach($project->tasks as $task)
+                    <div class="bg-white rounded-lg shadow-lg p-5 mb-3">
+                        <form action="{{$task->path()}}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            
+                            <div class="flex items-center">
+                                <input value="{{ $task->body }}" name="body" class="w-full
+                                {{ $task->completed ? 'text-gray-500' : '' }}">
+                                <input name="completed" type="checkbox" class="rounded-sm" onChange="this.form.submit()"
+                                {{ $task->completed ? 'checked' : '' }}>
+                            </div>
+                        </form>
+                    </div>
+
+                @endforeach
 
                 <div class="bg-white rounded-lg shadow-lg p-5 mb-3">
-                    Lorem Ipsum
-                </div>
+                    <form action="{{ $project->path() . '/tasks'}}" method="POST">
+                        @csrf
 
-                <div class="bg-white rounded-lg shadow-lg p-5 mb-3">
-                    Lorem Ipsum
-                </div>
-
-                <div class="bg-white rounded-lg shadow-lg p-5">
-                    Lorem Ipsum
+                        <input placeholder="Add a new task" type="text" class="w-full border-none" name="body">
+                    </form>   
                 </div>
             </div>
 
             <div>
                 <h2 class="text-gray-400 font-normal text-lg mb-3">General Notes</h2>
 
-                <textarea class="bg-white rounded-lg shadow-lg p-5 w-full" style="min-height: 150px;">Lorem Ipsum</textarea>
+                <textarea class="bg-white rounded-lg shadow-lg p-5 w-full border-none" style="min-height: 150px;">Lorem Ipsum</textarea>
             </div>   
         </div>
 

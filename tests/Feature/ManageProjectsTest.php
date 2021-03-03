@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,29 +15,30 @@ class ManageProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
-        $project = [
+        $attributes = [
             'title' => $this->faker()->sentence(),
             'description' => $this->faker()->paragraph(),
         ];
 
-        $this->post('/projects', $project)
-            ->assertRedirect('/projects');
+        $response = $this->post('/projects', $attributes);
 
-        $this->assertDatabaseHas('projects', $project);
+        $response->assertRedirect(Project::where($attributes)->first()->path());
+
+        $this->assertDatabaseHas('projects', $attributes);
 
         $this->get('/projects')
-            ->assertSee($project['title']);
+            ->assertSee($attributes['title']);
     }
 
     public function test_a_user_can_view_their_project()
     {
         $this->withoutExceptionHandling();
 
-        $this->be(User::factory()->create());
+        $this->signIn();
 
         $project = Project::factory()->create(
             ['owner_id' => auth()->id()]
@@ -51,9 +51,7 @@ class ManageProjectsTest extends TestCase
 
     public function test_an_auth_user_cannot_view_the_projects_of_others()
     {
-        //$this->withoutExceptionHandling();
-
-        $this->be(User::factory()->create());
+        $this->signIn();
 
         $project = Project::factory()->create();
 
@@ -62,7 +60,7 @@ class ManageProjectsTest extends TestCase
 
     public function test_a_project_requires_a_title()
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $project = Project::factory()
             ->raw([
@@ -75,7 +73,7 @@ class ManageProjectsTest extends TestCase
 
     public function test_a_project_requires_a_description()
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $project = Project::factory()
             ->raw([
