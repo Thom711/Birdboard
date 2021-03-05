@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Facades\Tests\Setup\ProjectsFactory;
 
 class ManageProjectsTest extends TestCase
 {
@@ -21,28 +22,42 @@ class ManageProjectsTest extends TestCase
 
         $attributes = [
             'title' => $this->faker()->sentence(),
-            'description' => $this->faker()->paragraph(),
+            'description' => $this->faker()->sentence(),
+            'notes' => 'General notes here.',
         ];
 
         $response = $this->post('/projects', $attributes);
 
-        $response->assertRedirect(Project::where($attributes)->first()->path());
+        $project = Project::where($attributes)->first();
+
+        $response->assertRedirect($project->path());
 
         $this->assertDatabaseHas('projects', $attributes);
 
-        $this->get('/projects')
-            ->assertSee($attributes['title']);
+        $this->get($project->path())
+            ->assertSee($attributes['title'])
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
+    }
+
+    public function test_a_user_can_update_a_project()
+    {
+        $this->withoutExceptionHandling();
+
+        $project = ProjectsFactory::ownedBy($this->signIn())
+            ->create();
+            
+        $this->patch($project->path(), $attributes = ['notes' => 'Changed']);
+
+        $this->assertDatabaseHas('projects', $attributes);
     }
 
     public function test_a_user_can_view_their_project()
     {
         $this->withoutExceptionHandling();
 
-        $this->signIn();
-
-        $project = Project::factory()->create(
-            ['owner_id' => auth()->id()]
-        );
+        $project = ProjectsFactory::ownedBy($this->signIn())
+            ->create();
 
         $this->get($project->path())
             ->assertSee($project->title)
@@ -56,6 +71,15 @@ class ManageProjectsTest extends TestCase
         $project = Project::factory()->create();
 
         $this->get($project->path())->assertStatus(403);
+    }
+
+    public function test_an_auth_user_cannot_update_the_projects_of_others()
+    {
+        $this->signIn();
+
+        $project = Project::factory()->create();
+
+        $this->patch($project->path())->assertStatus(403);
     }
 
     public function test_a_project_requires_a_title()

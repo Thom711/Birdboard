@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Project;
 use App\Models\Task;
+use Facades\Tests\Setup\ProjectsFactory;
 
 class ProjectTasksTest extends TestCase
 {
@@ -32,9 +33,8 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_project_can_have_tasks()
     {
-        $this->signIn();
-
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
+        $project = ProjectsFactory::ownedBy($this->signIn())
+            ->create();
 
         $this->post($project->path() . '/tasks', ['body' => 'Test Task']);
 
@@ -45,13 +45,11 @@ class ProjectTasksTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->signIn();
+        $project = ProjectsFactory::ownedBy($this->signIn())
+            ->withTasks(1)
+            ->create();
 
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
-
-        $task = $project->addTask('Test task');
-
-        $this->patch($task->path(), ['body' => 'changed', 'completed' => true]);
+        $this->patch($project->tasks->first()->path(), ['body' => 'changed', 'completed' => true]);
 
         $this->assertDatabaseHas('tasks', ['body' => 'changed', 'completed' => true]);
     }
@@ -60,11 +58,10 @@ class ProjectTasksTest extends TestCase
     {
         $this->signIn();
 
-        $project = Project::factory()->create();
+        $project = ProjectsFactory::withTasks(1)
+            ->create();
 
-        $task = $project->addTask('Test task');
-
-        $this->patch($task->path(), ['body' => 'changed', 'completed' => true])
+        $this->patch($project->tasks->first()->path(), ['body' => 'changed', 'completed' => true])
             ->assertStatus(403);
 
             $this->assertDatabaseMissing('tasks', ['body' => 'changed', 'completed' => true]);
@@ -72,9 +69,8 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_task_requires_a_body()
     {
-        $this->signIn();
-
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
+        $project = ProjectsFactory::ownedBy($this->signIn())
+            ->create();
 
         $task = Task::factory()
         ->raw([

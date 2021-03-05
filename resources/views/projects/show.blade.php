@@ -6,8 +6,7 @@
             <h2 class="text-gray-400 text-sm font-normal">
                 <a href={{ route('projects')}}>My Projects</a> / {{ $project->title }}
             </h2>
-            <a href={{ route('projects.create') }} class="py-2 px-4 bg-blue-500 text-white font-normal rounded-lg shadow-md hover:bg-blue-700 
-            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+            <a href={{ route('projects.create') }} class="btn-blue">
                 Create a new Project
             </a>
         </div>  
@@ -47,7 +46,15 @@
             <div>
                 <h2 class="text-gray-400 font-normal text-lg mb-3">General Notes</h2>
 
-                <textarea class="bg-white rounded-lg shadow-lg p-5 w-full border-none" style="min-height: 150px;">Lorem Ipsum</textarea>
+                <form action="{{ $project->path()}}" method="POST">
+                    @csrf
+                    @method('PATCH')
+
+                    <textarea class="bg-white rounded-lg shadow-lg p-5 w-full border-none" name="notes"
+                    style="min-height: 150px;" placeholder="Keep your notes here">{{ $project->notes }}</textarea>
+
+                    <button type="submit" class="btn-blue">Save</button>
+                </form>
             </div>   
         </div>
 
