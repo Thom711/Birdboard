@@ -1,37 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-	<form method="POST" action="{{ route('projects') }}">
-		@csrf
-		
-		<h1 class="heading">Create a Project</h1>
+	<div class="flex justify-center">
+		<div class="w-1/2 items-center m-8 p-8 bg-white rounded-lg shadow-lg">
+			<div class="flex justify-center">
+                <h1 class="text-blue-500 text-lg font-bold mb-4">Let's create something new</h1>
+            </div>
 
-		<div class="field">
-			<label class="label" for="title">Title</label>
-
-			<div class="control">
-				<input type="text" class="input" name="title" placeholder="Title">
-			</div>
+			<form method="POST" action="{{ route('projects') }}">
+				@include('projects._form', ['project' => new App\Models\Project])
+			</form>
 		</div>
-
-		<div class="field">
-			<label class="label" for="description">Description</label>
-
-			<div class="control">
-				<textarea name="description" class="textarea"></textarea>
-			</div>			
-		</div>
-
-		<div class="field">
-			<div class="control">
-				<button type="submit" class="button is-link">Create Project</button>
-
-				
-			</div>	
-
-					
-		</div>
-	</form>
-
-	<a href={{ route('projects') }}><button class="button is-link">Cancel</button></a>
+	</div>	
 @endsection

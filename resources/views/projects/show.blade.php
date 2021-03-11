@@ -6,8 +6,8 @@
             <h2 class="text-gray-400 text-sm font-normal">
                 <a href={{ route('projects')}}>My Projects</a> / {{ $project->title }}
             </h2>
-            <a href={{ route('projects.create') }} class="btn-blue">
-                Create a new Project
+            <a href={{ $project->path() . '/edit' }} class="btn-blue">
+                Edit Project
             </a>
         </div>  
     </div>
